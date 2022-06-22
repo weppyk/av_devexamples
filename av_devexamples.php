@@ -52,7 +52,9 @@ class Av_DevExamples extends Module
       //parent::install validate if string, check version compatibility, dependencies and if not installed, install module, enable for actual shop/context
       //set permision, add restriction for groups,update translation
       parent::install() 
-      && $this->registerHook('displayAdminProductsExtra')
+      && $this->registerHook('leftColumn')
+      && $this->registerHook('rightColumn')
+      && $this->registerHook('actionFrontControllerSetMedia')
     );
   }
 
@@ -62,9 +64,99 @@ class Av_DevExamples extends Module
     $this->_clearCache('*');
     return (
       parent::uninstall()
-      && $this->unregisterHook('displayAdminProductsExtra')
+      && $this->unregisterHook('leftColumn')
+      && $this->unregisterHook('rightColumn')
+      && $this->unregisterHook('actionFrontControllerSetMedia')
     );
   }
+
+  /** Configuration site */
+  public function getContent()
+  {
+    return "funny ".$this->displayFormConfigDevExamples() ;
+  }
+
+/**
+ * Builds the configuration form
+ * @return string HTML code
+ */
+public function displayFormConfigDevExamples()
+{
+  // Init Fields form array
+  $form = [
+    'form' => [
+      'legend' => [
+        'title' => $this->l('Settings'),
+      ],
+      'input' => [
+        [
+          'type' => 'text',
+          'label' => $this->l('Configuration value'),
+          'name' => 'MYMODULE_CONFIG',
+          'size' => 20,
+          'required' => true,
+        ],
+      ],
+      'submit' => [
+        'title' => $this->l('Save'),
+        'class' => 'btn btn-default pull-right',
+      ],
+    ],
+  ];
+
+  $helper = new HelperForm();
+
+  // Module, token and currentIndex
+  $helper->table = $this->table;
+  $helper->name_controller = $this->name;
+  $helper->token = Tools::getAdminTokenLite('AdminModules');
+  $helper->currentIndex = AdminController::$currentIndex . '&' . http_build_query(['configure' => $this->name]);
+  $helper->submit_action = 'submit' . $this->name;
+
+  // Default language
+  $helper->default_form_language = (int) Configuration::get('PS_LANG_DEFAULT');
+
+  // Load current value into the form
+  $helper->fields_value['MYMODULE_CONFIG'] = Tools::getValue('MYMODULE_CONFIG', Configuration::get('MYMODULE_CONFIG'));
+
+  return $helper->generateForm([$form]);
+}
+
+public function hookDisplayLeftColumn($params)
+{
+    $this->context->smarty->assign([
+        'my_module_name' => Configuration::get('MYMODULE_NAME'),
+        'my_module_link' => $this->context->link->getModuleLink('mymodule', 'display')
+    ]);
+
+    return $this->display(__FILE__, 'av_devexamples.tpl');
+}
+
+public function hookDisplayRightColumn($params)
+{
+    return $this->hookDisplayLeftColumn($params);
+}
+
+public function hookActionFrontControllerSetMedia()
+{
+    $this->context->controller->registerStylesheet(
+        'mymodule-style',
+        $this->_path.'views/css/mymodule.css',
+        [
+            'media' => 'all',
+            'priority' => 1000,
+        ]
+    );
+
+    $this->context->controller->registerJavascript(
+        'mymodule-javascript',
+        $this->_path.'views/js/mymodule.js',
+        [
+            'position' => 'bottom',
+            'priority' => 1000,
+        ]
+    );
+}
 
 }
 
