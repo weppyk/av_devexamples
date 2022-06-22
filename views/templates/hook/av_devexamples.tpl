@@ -1,5 +1,5 @@
 <!-- Block mymodule -->
-<div id="mymodule_block_home" class="block">
+<div id="av_devexamples_block_home" class="block">
   <h4>{l s='Welcome!' mod='av_devexamples'}</h4>
   <div class="block_content">
     <p>Hello,

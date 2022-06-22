@@ -52,8 +52,9 @@ class Av_DevExamples extends Module
       //parent::install validate if string, check version compatibility, dependencies and if not installed, install module, enable for actual shop/context
       //set permision, add restriction for groups,update translation
       parent::install() 
-      && $this->registerHook('leftColumn')
-      && $this->registerHook('rightColumn')
+      && $this->registerHook('displayLeftColumn')
+      && $this->registerHook('displayRightColumn')
+      && $this->registerHook('displayContentWrapperTop')
       && $this->registerHook('actionFrontControllerSetMedia')
     );
   }
@@ -66,6 +67,7 @@ class Av_DevExamples extends Module
       parent::uninstall()
       && $this->unregisterHook('leftColumn')
       && $this->unregisterHook('rightColumn')
+      && $this->unregisterHook('displayContentWrapperTop')
       && $this->unregisterHook('actionFrontControllerSetMedia')
     );
   }
@@ -126,22 +128,26 @@ public function hookDisplayLeftColumn($params)
 {
     $this->context->smarty->assign([
         'my_module_name' => Configuration::get('MYMODULE_NAME'),
-        'my_module_link' => $this->context->link->getModuleLink('mymodule', 'display')
+        'my_module_link' => $this->context->link->getModuleLink('av_devexamples', 'display')
     ]);
 
-    return $this->display(__FILE__, 'av_devexamples.tpl');
+    return "Here follows template: ".$this->display(__FILE__, 'av_devexamples.tpl');
 }
 
 public function hookDisplayRightColumn($params)
 {
-    return $this->hookDisplayLeftColumn($params);
+  return $this->hookDisplayLeftColumn($params);
+}
+public function hookdisplayContentWrapperTop($params)
+{
+  return $this->hookDisplayLeftColumn($params);
 }
 
 public function hookActionFrontControllerSetMedia()
 {
     $this->context->controller->registerStylesheet(
-        'mymodule-style',
-        $this->_path.'views/css/mymodule.css',
+        'av_devexamples-style',
+        $this->_path.'views/css/av_devexamples.css',
         [
             'media' => 'all',
             'priority' => 1000,
@@ -149,8 +155,8 @@ public function hookActionFrontControllerSetMedia()
     );
 
     $this->context->controller->registerJavascript(
-        'mymodule-javascript',
-        $this->_path.'views/js/mymodule.js',
+        'av_devexamples-javascript',
+        $this->_path.'views/js/av_devexamples.js',
         [
             'position' => 'bottom',
             'priority' => 1000,

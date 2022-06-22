@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>av_devexamples</name>
+    <displayName><![CDATA[Developer Examples for Prestashop 1.7]]></displayName>
+    <version><![CDATA[0.1.0]]></version>
+    <description><![CDATA[This modules is for helping developers to learn working with Prestashop.]]></description>
+    <author><![CDATA[Radek Drlik]]></author>
+    <tab><![CDATA[back_office_features]]></tab>
+	<confirmUninstall><![CDATA[Are you sure you want to uninstall?]]></confirmUninstall>
+    <is_configurable>1</is_configurable>
+    <need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>
